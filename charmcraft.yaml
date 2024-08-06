@@ -23,6 +23,10 @@ parts:
 containers:
     gubernator:
         resource: gubernator
+    testsome:
+        resource: gubernator
+    moretest:
+        resource: gubernator
 
 resources:
     gubernator:

@@ -37,6 +37,7 @@ class HexanatorCharm(ops.CharmBase):
         The `gubernator` service is configured and enabled in the `rockcraft.yaml` file.
         Pebble starts with `--on-hold` in the workload container, release it.
         """
+        __import__("logging").warn("####### Pebble ready %s", [event, event.workload])
         event.workload.replan()
         self.unit.status = ops.ActiveStatus()
 
