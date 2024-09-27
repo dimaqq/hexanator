@@ -10,21 +10,24 @@ import pytest
 import yaml
 from pytest_operator.plugin import OpsTest
 
-logger = logging.getLogger(__name__)
-
 METADATA = yaml.safe_load(Path("./charmcraft.yaml").read_text())
 APP_NAME = METADATA["name"]
+CHARM_CACHE = Path("/code/hexanator/.tox/integration/tmp/pytest/testm0/charms/hexanator_arm64.charm")
+
+
+async def get_charm(ops_test):
+    if CHARM_CACHE.exists():
+        logging.warning("Reusing a charm from %r", CHARM_CACHE)
+        return CHARM_CACHE
+    rv = await ops_test.build_charm(".")
+    logging.warning("Cached charm not found, made new one %r", rv)
+    return rv
 
 
 @pytest.mark.abort_on_fail
 async def test_build_and_deploy(ops_test: OpsTest):
-    """Build the charm-under-test and deploy it together with related charms.
-
-    Assert on the unit status before any relations/configurations take place.
-    """
-    # Build and deploy charm from local source folder
-    charm = await ops_test.build_charm(".")
     resources = {"gubernator": METADATA["resources"]["gubernator"]["upstream-source"]}
+    charm = await get_charm(ops_test)
 
     # Deploy the charm and wait for active/idle status
     await asyncio.gather(
