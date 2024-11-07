@@ -12,7 +12,7 @@ from pytest_operator.plugin import OpsTest
 
 METADATA = yaml.safe_load(Path("./charmcraft.yaml").read_text())
 APP_NAME = METADATA["name"]
-CHARM_CACHE = Path("/code/hexanator/.tox/integration/tmp/pytest/testm0/charms/hexanator_arm64.charm")
+CHARM_CACHE = Path.home() / "test.charm"
 
 
 async def get_charm(ops_test):
@@ -21,7 +21,10 @@ async def get_charm(ops_test):
         return CHARM_CACHE
     rv = await ops_test.build_charm(".")
     logging.warning("Cached charm not found, made new one %r", rv)
-    return rv
+    # FIXME py3.11+, apparently
+    rv.copy(CHARM_CACHE)
+    assert CHARM_CACHE.exists()
+    return CHARM_CACHE
 
 
 @pytest.mark.abort_on_fail
@@ -36,3 +39,11 @@ async def test_build_and_deploy(ops_test: OpsTest):
             apps=[APP_NAME], status="active", raise_on_blocked=True, timeout=1000
         ),
     )
+
+    model = ops_test.model
+    assert model
+
+    app = model.applications["hexanator"]
+    print(app.name)
+    print(app.min_units)
+    # print(app.no_such_thing)
