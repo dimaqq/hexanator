@@ -1,52 +1,17 @@
 ---
-name: gubernator
-version: 3.0.0
-summary: High-performance, distributed rate-limiting service
-description: |
-    Gubernator is a high-performance, distributed rate-limiting service.
-license: Apache-2.0
-
-platforms: {amd64: null, arm64: null}
-
-base: ubuntu@24.04
-
+name: chiselled-python
+base: bare # using a bare base
+build-base: ubuntu@22.04 # using Ubuntu Jammy only for the build environment
+version: '3.11'
+summary: Chiselled Python3.11 rock
+description: Example of a chiselled Python rock
+platforms:
+    amd64:
+run-user: _daemon_ # setting a non-root user for the rock
 parts:
-    go-deps:
+    install-python-slices:
         plugin: nil
-        build-packages:
-            - golang-go
-
-    gubernator:
-        plugin: go
-        source: https://github.com/gubernator-io/gubernator.git
-        source-type: git
-        # The tip of the v3.0 branch fails the health check
-        # source-branch: v3.0
-        # A known good revision from v3.0 branch from June 2024
-        source-commit: 2903b1b566dc9beab322e37ecef4aff50c1a7a97
         stage-packages:
-            - ca-certificates
-        after:
-            - go-deps
-
-services:
-    gubernator:
-        override: replace
-        startup: enabled
-        command: /bin/gubernator
-        environment:
-            GUBER_TRACING_LEVEL: DEBUG
-            GUBER_HTTP_ADDRESS: 0.0.0.0:80
-            GUBER_GRPC_ADDRESS: 0.0.0.0:81
-        on-success: shutdown
-        on-failure: shutdown
-        on-check-failure:
-            online: shutdown
-
-checks:
-    online:
-        override: replace
-        exec:
-            # The healthcheck binary is provided by gubernator, it uses same env vars as the daemon
-            command: /bin/healthcheck
-        period: 3s
+            - base-files_release-info # we only want the release information
+            - python3.11_core # we just need the Python core functionality
+            - coreutils_bins # includes /usr/bin/tail and the required shread libraries
