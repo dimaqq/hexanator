@@ -2,6 +2,7 @@
 # Copyright 2024 dima.tisnek@canonical.com
 # See LICENSE file for licensing details.
 """Charmed Gubernator."""
+
 import logging
 import socket
 
