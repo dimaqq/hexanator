@@ -65,9 +65,12 @@ ops-scenario = { url = "https://github.com/dimaqq/operator/archive/refs/tags/v78
 [dependency-groups]
 dev = [
     "pytest>=8.3.5",
+    "pytest-cov",
     "pyright",
     "coverage[toml]",
     "ops-scenario",
+    "ruff",
+    "codespell",
 ]
 integration = [
     "jubilant",
