@@ -52,6 +52,12 @@ requires:
         limit: 1
         optional: true
 
+# FIXME debug only
+actions:
+    test:
+        description: Retrieve collected traces.
+        required: []
+
 charm-libs:
     - lib: traefik_k8s.ingress
       version: '2'
