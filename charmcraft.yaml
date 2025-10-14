@@ -17,8 +17,6 @@ parts:
         source: .
         build-snaps:
             - astral-uv
-        build-packages:
-            - cargo
 
 containers:
     gubernator:
