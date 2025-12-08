@@ -3,10 +3,10 @@ name = "hexanator"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.12"
 dependencies = [
     "opentelemetry-api>=1.31.1",
-    "ops[tracing]",
+    "ops[tracing]~=3.0",
 ]
 
 # Testing tools configuration
@@ -63,11 +63,10 @@ dev = [
     "pytest-cov",
     "pyright",
     "coverage[toml]",
-    "ops-scenario",
+    "ops[testing]",
     "ruff",
     "codespell",
 ]
 integration = [
     "jubilant",
-    "pytest-operator",
 ]
