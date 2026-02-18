@@ -8,7 +8,7 @@ dependencies = [
     "opentelemetry-api>=1.31.1",
     "ops~=3.0",
     "ops-tracing~=3.0",
-    "pydantic",
+    "pydantic~=2.12",
 ]
 
 # Testing tools configuration
@@ -31,7 +31,7 @@ target-version = ["py38"]
 [tool.ruff]
 line-length = 99
 select = ["E", "W", "F", "C", "N", "D", "I001"]
-extend-ignore = [
+lint.extend-ignore = [
     "D203",
     "D204",
     "D213",
@@ -67,7 +67,7 @@ ops-scenario = { url = "https://github.com/dimaqq/operator/archive/refs/tags/vRe
 dev = [
     "pytest>=8.3.5",
     "pytest-cov",
-    "pyright",
+    "pyright>=1.1.402",
     "coverage[toml]",
     "ops-scenario",
     "ruff",
