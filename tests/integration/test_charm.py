@@ -2,35 +2,59 @@
 # Copyright 2024 dima.tisnek@canonical.com
 # See LICENSE file for licensing details.
 
-import asyncio
 import logging
-from pathlib import Path
+import pathlib
+import subprocess
+from typing import Iterator
 
+import jubilant
 import pytest
 import yaml
-from pytest_operator.plugin import OpsTest
 
 logger = logging.getLogger(__name__)
 
-METADATA = yaml.safe_load(Path("./charmcraft.yaml").read_text())
+METADATA = yaml.safe_load(pathlib.Path("./charmcraft.yaml").read_text())
 APP_NAME = METADATA["name"]
+IMAGE_NAME = METADATA["resources"]["gubernator"]["upstream-source"]
 
 
-@pytest.mark.abort_on_fail
-async def test_build_and_deploy(ops_test: OpsTest):
+@pytest.fixture(scope="module")
+def juju() -> Iterator[jubilant.Juju]:
+    with jubilant.temp_model() as juju:
+        yield juju
+
+
+@pytest.fixture(scope="module")
+def charm() -> pathlib.Path:
+    subprocess.check_call(["charmcraft", "pack"])
+    return next(pathlib.Path().glob("*.charm"))
+
+
+@pytest.fixture(scope="module")
+def gubernator_image() -> str:
+    subprocess.check_call(["rockcraft", "pack"])
+    rock = next(pathlib.Path().glob("*.rock"))
+    subprocess.check_call(
+        [
+            "sudo",
+            "ctr",
+            "--namespace",
+            "k8s.io",
+            "images",
+            "import",
+            rock,
+            "--base-name",
+            IMAGE_NAME.split(":")[0],
+        ]
+    )
+    return IMAGE_NAME
+
+
+def test_build_and_deploy(juju: jubilant.Juju, charm: pathlib.Path, gubernator_image: str):
     """Build the charm-under-test and deploy it together with related charms.
 
     Assert on the unit status before any relations/configurations take place.
     """
-    # Build and deploy charm from local source folder
-    charm = await ops_test.build_charm(".")
-    resources = {"gubernator": METADATA["resources"]["gubernator"]["upstream-source"]}
-
-    # Deploy the charm and wait for active/idle status
-    assert ops_test.model
-    await asyncio.gather(
-        ops_test.model.deploy(charm, resources=resources, application_name=APP_NAME),
-        ops_test.model.wait_for_idle(
-            apps=[APP_NAME], status="active", raise_on_blocked=True, timeout=1000
-        ),
-    )
+    resources = {"gubernator": gubernator_image}
+    juju.deploy(charm, app=APP_NAME, resources=resources)
+    juju.wait(jubilant.all_active)
