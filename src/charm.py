@@ -9,6 +9,8 @@ import socket
 import opentelemetry.trace
 import ops
 from charms.traefik_k8s.v2.ingress import IngressPerAppRequirer
+from pydantic import BaseModel
+from pydantic.experimental.missing_sentinel import MISSING
 
 tracer = opentelemetry.trace.get_tracer(__name__)
 
@@ -25,6 +27,17 @@ def kubernetes_service_dns_name():
     # FIXME: not sure about this, it could be customised by k8s admin
     assert service_dns_name.endswith(".local")
     return service_dns_name
+
+
+class PeerData(BaseModel):
+    """The shape of data in the peer relation."""
+    nullable: str | None = None
+    not_required: str | MISSING = MISSING
+
+
+class CharmConfig(BaseModel):
+    """Typed charm configuration."""
+    value: int
 
 
 # @charm_tracing( tracing_endpoint="tracing_endpoint")
@@ -46,6 +59,33 @@ class HexanatorCharm(ops.CharmBase):
 
         self.framework.observe(self.on["gubernator"].pebble_ready, self._on_pebble_ready)
         self.framework.observe(self.on["rate-limit"].relation_created, self._on_relation)
+        self.framework.observe(self.on["peer-data"].relation_changed, self._on_peer_data)
+        self.framework.observe(self.on.config_changed, self._on_config_changed)
+
+    def _on_config_changed(self, event: ops.ConfigChangedEvent):
+        if not self.unit.is_leader():
+            return
+        config = self.load_config(CharmConfig)
+        kw = {}
+        if config.value % 2:
+            kw["nullable"] = str(config.value)
+        if config.value %3:
+            kw["not_required"] = str(config.value)
+        data = PeerData(**kw)
+        rel = self.model.get_relation("peer-data")
+        if not rel:
+            logging.warning("No peer relation?")
+            self.unit.status = ops.WaitingStatus("Need peer relation")
+            return
+        rel.save(data, self.app)
+        self.unit.status = ops.ActiveStatus(str(data))
+
+    def _on_peer_data(self, event: ops.RelationChangedEvent):
+        if self.unit.is_leader():
+            return
+        data = event.relation.load(PeerData, self.app)
+        logging.warning("Follower sees: %s", data)
+        self.unit.status = ops.ActiveStatus(str(data))
 
     def _on_pebble_ready(self, event: ops.PebbleReadyEvent):
         """Kick off Pebble services.

@@ -109,14 +109,16 @@ version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
     { name = "opentelemetry-api" },
-    { name = "ops", extra = ["tracing"] },
+    { name = "ops" },
+    { name = "ops-tracing" },
+    { name = "pydantic" },
 ]
 
 [package.dev-dependencies]
 dev = [
     { name = "codespell" },
     { name = "coverage" },
-    { name = "ops", extra = ["testing"] },
+    { name = "ops-scenario" },
     { name = "pyright" },
     { name = "pytest" },
     { name = "pytest-cov" },
@@ -129,15 +131,17 @@ integration = [
 [package.metadata]
 requires-dist = [
     { name = "opentelemetry-api", specifier = ">=1.31.1" },
-    { name = "ops", extras = ["tracing"], specifier = "~=3.0" },
+    { name = "ops", url = "https://github.com/dimaqq/operator/archive/refs/tags/vRelSave.zip", subdirectory = "." },
+    { name = "ops-tracing", url = "https://github.com/dimaqq/operator/archive/refs/tags/vRelSave.zip", subdirectory = "tracing" },
+    { name = "pydantic", specifier = "~=2.12" },
 ]
 
 [package.metadata.requires-dev]
 dev = [
     { name = "codespell" },
     { name = "coverage", extras = ["toml"] },
-    { name = "ops", extras = ["testing"] },
-    { name = "pyright" },
+    { name = "ops-scenario", url = "https://github.com/dimaqq/operator/archive/refs/tags/vRelSave.zip", subdirectory = "testing" },
+    { name = "pyright", specifier = ">=1.1.402" },
     { name = "pytest", specifier = ">=8.3.5" },
     { name = "pytest-cov" },
     { name = "ruff" },
@@ -228,52 +232,61 @@ wheels = [
 
 [[package]]
 name = "ops"
-version = "3.4.0"
-source = { registry = "https://pypi.org/simple" }
+version = "3.6.0.dev0"
+source = { url = "https://github.com/dimaqq/operator/archive/refs/tags/vRelSave.zip", subdirectory = "." }
 dependencies = [
     { name = "opentelemetry-api" },
     { name = "pyyaml" },
     { name = "websocket-client" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/eb/50/f0bae442ba54114c0ed4983a7bece9330f9f170dfbd04caa8284c8deb476/ops-3.4.0.tar.gz", hash = "sha256:e100d904f0616eb11345547ad35a95caf5a2d178efa8ad4beebd7f045192a64a", size = 573216, upload-time = "2025-11-27T04:45:58.852Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/ef/e6/262240beb2e3f2fd981ebb82412148c93f830606bfe1fcabf92cdb967c56/ops-3.4.0-py3-none-any.whl", hash = "sha256:d5ea906cd9bf403fe0e83d10ee5ab9bd2307596a97c1690784f937d54d5a738c", size = 211359, upload-time = "2025-11-27T04:45:54.161Z" },
-]
+sdist = { hash = "sha256:d518e133ac8ec0c58b632aee318ea2dca169b72e9a5868bccd7c195063cc9c61" }
 
-[package.optional-dependencies]
-testing = [
-    { name = "ops-scenario" },
+[package.metadata]
+requires-dist = [
+    { name = "opentelemetry-api", specifier = "~=1.0" },
+    { name = "ops-scenario", marker = "extra == 'testing'", specifier = "==8.6.0.dev0" },
+    { name = "ops-tracing", marker = "extra == 'tracing'", specifier = "==3.6.0.dev0" },
+    { name = "pyyaml", specifier = "==6.*" },
+    { name = "websocket-client", specifier = "==1.*" },
 ]
-tracing = [
-    { name = "ops-tracing" },
-]
+provides-extras = ["testing", "tracing", "harness"]
 
 [[package]]
 name = "ops-scenario"
-version = "8.4.0"
-source = { registry = "https://pypi.org/simple" }
+version = "8.6.0.dev0"
+source = { url = "https://github.com/dimaqq/operator/archive/refs/tags/vRelSave.zip", subdirectory = "testing" }
 dependencies = [
     { name = "ops" },
     { name = "pyyaml" },
+    { name = "typing-extensions" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/80/a4/50dbe351488fed7621931962626563c7a8c6b65035fae09616251f03f16f/ops_scenario-8.4.0.tar.gz", hash = "sha256:b8837dfe6d58596d1287589c62101cfe6ca350f43d8c64ba41c5305dd741af0c", size = 111219, upload-time = "2025-11-27T04:46:00.551Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/80/1c/c0d3cccc0ff50c88d21dc3b5ce2944c71f8d094f8de9daa7e555b1dd30e1/ops_scenario-8.4.0-py3-none-any.whl", hash = "sha256:a8de25b75a896bdc8958d7e4dc38ab06ef6cb07bfaeb4c725e64cadde712a7dd", size = 63250, upload-time = "2025-11-27T04:45:55.776Z" },
+sdist = { hash = "sha256:d518e133ac8ec0c58b632aee318ea2dca169b72e9a5868bccd7c195063cc9c61" }
+
+[package.metadata]
+requires-dist = [
+    { name = "ops", specifier = "==3.6.0.dev0" },
+    { name = "pyyaml", specifier = ">=6.0.1" },
+    { name = "typing-extensions", specifier = ">=4.9.0" },
 ]
 
 [[package]]
 name = "ops-tracing"
-version = "3.4.0"
-source = { registry = "https://pypi.org/simple" }
+version = "3.6.0.dev0"
+source = { url = "https://github.com/dimaqq/operator/archive/refs/tags/vRelSave.zip", subdirectory = "tracing" }
 dependencies = [
     { name = "opentelemetry-api" },
     { name = "opentelemetry-sdk" },
     { name = "ops" },
     { name = "pydantic" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/be/6c/622b9864d611d914131dcd5794267c460ac6aa768b0ebb6dc9b46a2e9c08/ops_tracing-3.4.0.tar.gz", hash = "sha256:ad160dc1b73c3481ce5c427d8051b2e6cfa633d1a14b866cfa09b6e4c115e96e", size = 28562, upload-time = "2025-11-27T04:46:01.524Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/2a/94/c347d1b46b9ab092d3f1b016a42c52629387551650181143525c5aef74fc/ops_tracing-3.4.0-py3-none-any.whl", hash = "sha256:1fd5ce2942a57faf09845668ba9078ac8e03e094c04c140bcacea599e2ab29e5", size = 31558, upload-time = "2025-11-27T04:45:57.412Z" },
+sdist = { hash = "sha256:d518e133ac8ec0c58b632aee318ea2dca169b72e9a5868bccd7c195063cc9c61" }
+
+[package.metadata]
+requires-dist = [
+    { name = "opentelemetry-api", specifier = "~=1.0" },
+    { name = "opentelemetry-sdk", specifier = "~=1.30" },
+    { name = "ops", specifier = "==3.6.0.dev0" },
+    { name = "pydantic" },
 ]
 
 [[package]]
