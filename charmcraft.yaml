@@ -50,11 +50,15 @@ requires:
         limit: 1
         optional: true
 
-# FIXME debug only
-actions:
-    test:
-        description: Retrieve collected traces.
-        required: []
+peers:
+    peer-data:
+        interface: peer-data
+
+config:
+    options:
+        value:
+            type: int
+            default: 0
 
 charm-libs:
     - lib: traefik_k8s.ingress

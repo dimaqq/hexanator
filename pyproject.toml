@@ -56,6 +56,7 @@ skip = "build,lib,venv,icon.svg,.tox,.git,.mypy_cache,.ruff_cache,.coverage,html
 
 [tool.pyright]
 include = ["src/**/*.py", "tests/**/*.py"]
+enableExperimentalFeatures = true
 
 [tool.uv.sources]
 ops = { url = "https://github.com/dimaqq/operator/archive/refs/tags/vRelSave.zip", subdirectory = "." }

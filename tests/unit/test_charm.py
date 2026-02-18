@@ -2,7 +2,7 @@ from unittest.mock import ANY
 
 import ops
 import pytest
-from ops.testing import Container, Context, Relation, State
+from ops.testing import Container, Context, PeerRelation, Relation, State
 
 from charm import HexanatorCharm
 
@@ -26,7 +26,13 @@ def initial_state():
     container = Container("gubernator", can_connect=True, layers=pebble_layers)
     ingress = Relation("ingress", id=0, interface="ingress", remote_app_name="ingress")
     rate_limit = Relation("rate-limit", id=1, interface="http", remote_app_name="user")
-    return State(leader=True, relations={ingress, rate_limit}, containers={container})  # type: ignore
+    peer = PeerRelation("peer-data", id=2, interface="peer-data")
+    return State(leader=True, relations={ingress, rate_limit, peer}, containers={container})  # type: ignore
+
+
+def test_config(ctx, initial_state):
+    state = ctx.run(ctx.on.config_changed(), initial_state)
+    assert state.unit_status == ops.ActiveStatus('nullable=None not_required=<MISSING>')
 
 
 def test_startup(ctx, initial_state):
