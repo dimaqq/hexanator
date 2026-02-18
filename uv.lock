@@ -79,6 +79,7 @@ dependencies = [
     { name = "opentelemetry-api" },
     { name = "ops" },
     { name = "ops-tracing" },
+    { name = "pydantic" },
 ]
 
 [package.dev-dependencies]
@@ -100,6 +101,7 @@ requires-dist = [
     { name = "opentelemetry-api", specifier = ">=1.31.1" },
     { name = "ops", url = "https://github.com/dimaqq/operator/archive/refs/tags/vRelSave.zip", subdirectory = "." },
     { name = "ops-tracing", url = "https://github.com/dimaqq/operator/archive/refs/tags/vRelSave.zip", subdirectory = "tracing" },
+    { name = "pydantic" },
 ]
 
 [package.metadata.requires-dev]

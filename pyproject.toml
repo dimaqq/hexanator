@@ -8,6 +8,7 @@ dependencies = [
     "opentelemetry-api>=1.31.1",
     "ops~=3.0",
     "ops-tracing~=3.0",
+    "pydantic",
 ]
 
 # Testing tools configuration
