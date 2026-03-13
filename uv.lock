@@ -126,6 +126,7 @@ dependencies = [
 dev = [
     { name = "codespell" },
     { name = "coverage" },
+    { name = "jubilant" },
     { name = "ops", extra = ["testing"] },
     { name = "pyright" },
     { name = "pytest" },
@@ -146,6 +147,7 @@ requires-dist = [
 dev = [
     { name = "codespell" },
     { name = "coverage", extras = ["toml"] },
+    { name = "jubilant" },
     { name = "ops", extras = ["testing"] },
     { name = "pyright" },
     { name = "pytest", specifier = ">=8.3.5" },

@@ -60,6 +60,7 @@ enableExperimentalFeatures = true
 
 [dependency-groups]
 dev = [
+    "jubilant",
     "pytest>=8.3.5",
     "pytest-cov",
     "pyright",
