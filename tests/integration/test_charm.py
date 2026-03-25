@@ -25,15 +25,15 @@ def juju() -> Iterator[jubilant.Juju]:
 
 
 @pytest.fixture(scope="module")
-def charm() -> pathlib.Path:
-    subprocess.check_call(["charmcraft", "pack"])
-    return next(pathlib.Path().glob("*.charm"))
+def charm(pytestconfig) -> pathlib.Path:
+    subprocess.check_call(["charmcraft", "pack"], cwd=pytestconfig.rootpath)
+    return next(pathlib.Path(pytestconfig.rootpath).glob("*.charm"))
 
 
 @pytest.fixture(scope="module")
-def gubernator_image() -> str:
-    subprocess.check_call(["rockcraft", "pack"])
-    rock = next(pathlib.Path().glob("*.rock"))
+def gubernator_image(pytestconfig) -> str:
+    subprocess.check_call(["rockcraft", "pack"], cwd=pytestconfig.rootpath)
+    rock = next(pathlib.Path(pytestconfig.rootpath).glob("*.rock"))
     subprocess.check_call(
         [
             "sudo",
